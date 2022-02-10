@@ -16,15 +16,17 @@ feature 'User can answer questions in order', %q{
       visit question_path(question)
     end
 
-    scenario 'gives an answer' do
+    scenario 'gives an answer', js: true do
       fill_in 'Your answer', with: 'tex tex tex'
       click_on 'Answer'
 
       expect(page).to have_content 'Answer was successfully created'
-      expect(page).to have_content 'tex tex tex'
+      within '.answers' do
+        expect(page).to have_content 'tex tex tex'
+      end
     end
     
-    scenario 'gives an answer with errors' do
+    scenario 'gives an answer with errors', js: true do
       click_on 'Answer'
 
       expect(page).to have_content "Body can't be blank"
