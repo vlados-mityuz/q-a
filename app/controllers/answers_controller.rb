@@ -3,15 +3,8 @@ class AnswersController < ApplicationController
   before_action :find_question, only: [:create]
 
   def create
-    @answer = @question.answers.new(answer_params)
+    @answer = @question.answers.create(answer_params)
     @answer.author_id = current_user.id
-
-    if @answer.save
-      redirect_to @question, notice: 'Answer was successfully created'
-    else
-      @question.reload
-      render "questions/show"
-    end
   end
 
   def destroy
