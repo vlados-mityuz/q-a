@@ -60,7 +60,7 @@ RSpec.describe AnswersController, type: :controller do
       end
 
       it 'redirects to question' do
-        delete :destroy, params: { params: { id: answer } }
+        delete :destroy, params: { id: answer }
         expect(response).to redirect_to assigns(:question)
         expect(flash[:notice]).to be_present
       end
