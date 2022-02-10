@@ -4,14 +4,15 @@ p= @question.body
 - if current_user&.author_of?(@question)
   p = link_to 'Delete question', question_path(@question), method: :delete
 
-= render 'shared/errors', resource: @answer
+.answer-errors
+  = render 'shared/errors', resource: @answer
 
-= form_with model: [@question, @answer], local: true do |f|
+= form_with model: [@question, @answer], local: false do |f|
   = f.label :body, 'Your answer'
   = f.text_area :body
   = f.submit 'Answer'
 
-- @question.answers.each do |answer|
-  li= answer.body
-  - if current_user&.author_of?(answer)
-    p = link_to 'Delete answer', answer_path(answer), method: :delete
+.answers
+  = render @question.answers
+    - if current_user&.author_of?(answer)
+      p = link_to 'Delete answer', answer_path(answer), method: :delete
