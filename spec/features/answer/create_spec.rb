@@ -20,7 +20,7 @@ feature 'User can answer questions in order', %q{
       fill_in 'Your answer', with: 'tex tex tex'
       click_on 'Answer'
 
-      expect(page).to have_content 'Answer was successfully created'
+      expect(page).to have_content 'Answer successfully created'
       within '.answers' do
         expect(page).to have_content 'tex tex tex'
       end
@@ -33,7 +33,7 @@ feature 'User can answer questions in order', %q{
     end
   end
 
-  scenario 'Unauthenticated user tries to ask a question' do
+  scenario 'Unauthenticated user tries to ask a question', js: true do
     visit questions_path
     click_on 'Ask question'
 

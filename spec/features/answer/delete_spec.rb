@@ -9,7 +9,7 @@ feature 'User can delete answers', %q{
   given(:author) { create(:user) }
   given(:question) { create(:question, :with_answers, author: author) }
 
-  scenario "authenticated user tries to delete own answer" do
+  scenario "authenticated user tries to delete own answer", js: true do
     sign_in(author)
     visit question_path(question)
 
@@ -19,17 +19,19 @@ feature 'User can delete answers', %q{
 
     click_on("Delete answer", match: :first)
 
+    expect(page).to have_content 'Answer successfully deleted'
+
     expect(page).not_to have_content del_answer
   end
 
-  scenario "authenticated user tries to delete someone's answer" do
+  scenario "authenticated user tries to delete someone's answer", js: true do
     sign_in(user)
     visit question_path(question)
 
     expect(page).not_to have_link 'Delete answer'
   end
 
-  scenario "unauthenticated user tries to delete answer" do
+  scenario "unauthenticated user tries to delete answer", js: true do
     visit question_path(question)
 
     expect(page).not_to have_link 'Delete answer'
