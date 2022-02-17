@@ -7,12 +7,10 @@ p= @question.body
 .answer-errors
   = render 'shared/errors', resource: @answer
 
-= form_with model: [@question, @answer], local: false do |f|
+= form_with model: [@question, @answer], class: 'new-answer', local: false do |f|
   = f.label :body, 'Your answer'
   = f.text_area :body
   = f.submit 'Answer'
 
 .answers
   = render @question.answers
-    - if current_user&.author_of?(answer)
-      p = link_to 'Delete answer', answer_path(answer), method: :delete

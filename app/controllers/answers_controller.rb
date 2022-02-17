@@ -1,32 +1,40 @@
 class AnswersController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :destroy]
-  before_action :find_question, only: [:create]
+  before_action :authenticate_user!, only: [:create, :destroy, :update]
+  before_action :find_answer, only: [:update, :destroy]
+  before_action :answer_question, only: [:update, :destroy]
 
   def create
-    @answer = @question.answers.create(answer_params)
+    @question = Question.find(params[:question_id])
+    @answer = @question.answers.new(answer_params)
     @answer.author_id = current_user.id
+    flash.now[:notice] = 'Answer successfully created' if @answer.save
+  end
+
+  def update
+    return unless current_user.author_of?(@answer)
+
+    @answer.update(answer_params)
+    flash.now[:notice] = 'Answer successfully updated'
   end
 
   def destroy
-    @answer = Answer.find(params[:id])
-    @question = @answer.question
-    if current_user.author_of?(@answer)
-      @answer.destroy
-      redirect_to question_path(@answer.question), notice: "Your answer was successfully deleted."
-    else
-      redirect_to question_path(@answer.question)
-    end
+    return unless current_user.author_of?(@answer)
+
+    @answer.destroy
+    flash.now[:notice] = 'Answer successfully deleted'
   end
 
   private
 
-  def find_question
-    @question = Question.find(params[:question_id])
+  def answer_question
+    @question = @answer.question
   end
 
-  helper_method :answer
+  def find_answer
+    @answer = Answer.find(params[:id])
+  end
 
   def answer_params
-    params.require(:answer).permit(:body)
+    params.require(:answer).permit(:body, :question_id)
   end
 end
