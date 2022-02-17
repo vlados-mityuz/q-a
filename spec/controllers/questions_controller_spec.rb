@@ -64,11 +64,61 @@ RSpec.describe QuestionsController, type: :controller do
     end
   end
 
+  describe 'PATCH #update' do
+    context 'if current user is the author of question' do
+      let!(:question) { create(:question) }
+      let(:user) { question.author }
+
+      before { login(user) }
+
+      context 'with valid attrubutes' do
+        it 'edits the answer' do
+          patch :update, params: { id: question, question: { title: 'new title', body: 'new body' } }, format: :js
+          question.reload
+          expect(question.title).to eq 'new title'
+          expect(question.body).to eq 'new body'
+        end
+
+        it 'renders update view' do
+          patch :update, params: { id: question, question: { title: 'new title', body: 'new body' } }, format: :js
+          expect(response).to render_template :update
+        end
+      end
+
+      context 'with invalid attributes' do
+        it 'does not change answer attributes' do
+          expect do
+            patch :update, params: { id: question, question: attributes_for(:question, :invalid) }, format: :js
+          end.to_not change(question, :title)
+        end
+
+        it 'renders create template' do
+          patch :update, params: { id: question, question: attributes_for(:question, :invalid), format: :js }
+          expect(response).to render_template :update
+        end
+      end
+    end
+
+    context 'if current user is not the author of answer' do
+      let!(:question) { create(:question) }
+      let(:user) { create(:user) }
+
+      before { login(user) }
+
+      it 'doesnt update question' do
+        patch :update, params: { id: question, question: { title: 'new title', body: 'new body' }, format: :js }
+        question.reload
+        expect(question.title).to_not eq 'new title'
+        expect(question.body).to_not eq 'new body'
+      end
+    end
+  end
+
   describe 'DELETE #destroy' do
     before { login(user) }
     
     let!(:question) { create(:question) }
-    let (:user) { question.author }
+    let(:user) { question.author }
       
     context 'if current user is the author of question' do
       it 'deletes the question' do

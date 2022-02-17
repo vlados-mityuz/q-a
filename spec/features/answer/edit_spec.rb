@@ -10,19 +10,21 @@ feature 'User can edit his answer', %q{
   given(:author) { create(:user) }
   given(:question) { create(:question, :with_answers, author: author) }
 
-  describe 'Authenticated user edits his asnwers', js: :true do
+  describe 'Authenticated user edits his answers', js: :true do
     background do
       sign_in(author)
       visit question_path(question)
 
       @editable_answer = question.answers.first.body
 
-      click_on('Edit', match: :first)
+      within '.answers' do
+        click_on('Edit', match: :first)
+      end
     end
 
     scenario 'without errors', js: :true do
       within '.answers' do
-        fill_in 'Your answer', with: 'edited answer'
+        fill_in 'Edit answer', with: 'edited answer'
         click_on 'Save'
 
         expect(page).to_not have_content @editable_answer
@@ -35,7 +37,7 @@ feature 'User can edit his answer', %q{
 
     scenario 'with errors', js: :true do
       within '.answers' do
-        fill_in 'Your answer', with: ''
+        fill_in 'Edit answer', with: ''
         click_on 'Save'
 
         expect(page).to have_content @editable_answer
@@ -52,12 +54,16 @@ feature 'User can edit his answer', %q{
     sign_in(user)
     visit question_path(question)
 
-    expect(page).not_to have_link 'Edit'
+    within '.answers' do
+      expect(page).not_to have_link 'Edit'
+    end
   end
 
   scenario 'Unauthenticated user can edit his answer' do
     visit question_path(question)
 
-    expect(page).to_not have_link 'Edit'
+    within '.answers' do
+      expect(page).not_to have_link 'Edit'
+    end
   end
 end

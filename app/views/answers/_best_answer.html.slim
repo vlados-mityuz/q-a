@@ -1,0 +1,16 @@
+hr
+
+h3 Best answer:
+h4= resource.body
+- if current_user&.author_of?(resource)
+  p = link_to 'Edit', '#', class: 'edit-answer-link', data: { answer_id: resource.id }
+  p = link_to 'Delete answer', answer_path(resource), method: :delete, remote: true
+
+= form_with model: resource, class: 'hidden', html: { id: "edit-answer-#{resource.id}" }, local: false do |f|
+  = f.label :body, 'Edit answer'
+  = f.text_area :body
+  = f.submit 'Save'
+
+= render 'shared/flash_message'
+
+hr

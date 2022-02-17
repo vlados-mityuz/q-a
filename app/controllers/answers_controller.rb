@@ -1,7 +1,7 @@
 class AnswersController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :destroy, :update]
-  before_action :find_answer, only: [:update, :destroy]
-  before_action :answer_question, only: [:update, :destroy]
+  before_action :authenticate_user!, only: [:create, :destroy, :update, :best_answer]
+  before_action :find_answer, only: [:update, :destroy, :best_answer]
+  before_action :answer_question, only: [:update, :destroy, :best_answer]
 
   def create
     @question = Question.find(params[:question_id])
@@ -22,6 +22,16 @@ class AnswersController < ApplicationController
 
     @answer.destroy
     flash.now[:notice] = 'Answer successfully deleted'
+  end
+
+  def best_answer
+    return unless current_user.author_of?(@question)
+
+    @answer.mark_as_best
+
+    @best_answer = @question.best_answer
+    @other_answers = @question.answers.where.not(id: @question.best_answer_id)
+    flash.now[:notice] = 'Best answer was chosen'
   end
 
   private
