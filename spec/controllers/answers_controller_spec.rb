@@ -71,13 +71,10 @@ RSpec.describe AnswersController, type: :controller do
 
       before { login(user) }
 
-      it 'doesnt edit the answer' do
-        expect { patch :update, params: { id: answer }, format: :js }.to_not change(Answer, :count)
-      end
-
-      it 'redirects to question' do
-        patch :update, params: { id: answer }, format: :js
-        expect(response).to render_template :update
+      it 'tries to update answer' do
+        patch :update, params: { id: answer, answer: { body: 'new body' }, format: :js }
+        answer.reload
+        expect(answer.body).to_not eq 'new body'
       end
     end
   end
