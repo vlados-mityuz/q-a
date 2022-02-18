@@ -11,27 +11,26 @@ class AnswersController < ApplicationController
   end
 
   def update
-    return unless current_user.author_of?(@answer)
-
-    @answer.update(answer_params)
-    flash.now[:notice] = 'Answer successfully updated'
+    if current_user.author_of?(@answer)
+      @answer.update(answer_params)
+      flash.now[:notice] = 'Answer successfully updated'
+    end
   end
 
   def destroy
-    return unless current_user.author_of?(@answer)
-
-    @answer.destroy
-    flash.now[:notice] = 'Answer successfully deleted'
+    if current_user.author_of?(@answer)
+      @answer.destroy
+      flash.now[:notice] = 'Answer successfully deleted'
+    end
   end
 
   def best_answer
-    return unless current_user.author_of?(@question)
+    if current_user.author_of?(@question)
+      @answer.mark_as_best
 
-    @answer.mark_as_best
-
-    @best_answer = @question.best_answer
-    @other_answers = @question.answers.where.not(id: @question.best_answer_id)
-    flash.now[:notice] = 'Best answer was chosen'
+      @best_answer = @question.best_answer
+      flash.now[:notice] = 'Best answer was chosen'
+    end
   end
 
   private
@@ -45,6 +44,6 @@ class AnswersController < ApplicationController
   end
 
   def answer_params
-    params.require(:answer).permit(:body, :question_id)
+    params.require(:answer).permit(:body)
   end
 end

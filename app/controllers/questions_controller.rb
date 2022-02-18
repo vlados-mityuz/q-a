@@ -10,7 +10,6 @@ class QuestionsController < ApplicationController
     @answer = Answer.new(question: @question)
 
     @best_answer = @question.best_answer
-    @other_answers = @question.answers.where.not(id: @question.best_answer_id)
   end
 
   def edit
@@ -32,10 +31,10 @@ class QuestionsController < ApplicationController
   end
 
   def update
-    return unless current_user.author_of?(@question)
-
-    @question.update(question_params)
-    flash.now[:notice] = 'Question successfully updated'
+    if current_user.author_of?(@question)
+      @question.update(question_params)
+      flash.now[:notice] = 'Question successfully updated'
+    end
   end
 
   def destroy
