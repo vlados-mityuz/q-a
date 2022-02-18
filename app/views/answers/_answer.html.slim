@@ -1,4 +1,8 @@
 li= answer.body
+- if @answer.files.attached?
+  - @answer.files.each do |file|
+    p= link_to file.filename.to_s, url_for(file)
+
 -if current_user&.author_of?(@question)
   p= link_to 'Best answer', best_answer_answer_path(answer), method: :post, remote: true
 
@@ -7,8 +11,9 @@ li= answer.body
   p = link_to 'Delete answer', answer_path(answer), method: :delete, remote: true
 
 = form_with model: answer, class: 'hidden', html: { id: "edit-answer-#{answer.id}" }, local: false do |f|
-  = f.label :body, 'Edit answer'
-  = f.text_area :body
-  = f.submit 'Save'
+  p
+    = f.label :body, 'Edit answer'
+    = f.text_area :body
+  p= f.submit 'Save'
 
 = render 'shared/flash_message'
