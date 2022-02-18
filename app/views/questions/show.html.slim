@@ -14,4 +14,4 @@ hr
   - if @question.best_answer
     = render 'answers/best_answer', resource: @best_answer
   h3 All Answers
-  = render @other_answers
+  = render @question.other_answers
