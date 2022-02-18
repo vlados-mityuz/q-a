@@ -8,6 +8,8 @@ class QuestionsController < ApplicationController
 
   def show
     @answer = Answer.new(question: @question)
+
+    @best_answer = @question.best_answer
   end
 
   def edit
@@ -29,10 +31,9 @@ class QuestionsController < ApplicationController
   end
 
   def update
-    if @question.update(question_params)
-      redirect_to @question
-    else
-      render :edit
+    if current_user.author_of?(@question)
+      @question.update(question_params)
+      flash.now[:notice] = 'Question successfully updated'
     end
   end
 

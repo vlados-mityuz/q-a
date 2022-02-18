@@ -6,23 +6,34 @@ feature 'User can delete answers', %q{
 } do
 
   given(:user) { create(:user) }
-  given(:another_user) { create(:user) }
+  given(:author) { create(:user) }
+  given(:question) { create(:question, :with_answers, author: author) }
 
-  describe 'Authenticated user' do
+  scenario "authenticated user tries to delete own answer", js: true do
+    sign_in(author)
+    visit question_path(question)
 
-    scenario 'deletes his answer' do
-      sign_in(user)
+    del_answer = question.answers.first.body
 
-      visit questions_path
-      click_on 'Ask question'
-      question = create_question
+    expect(page).to have_content del_answer
 
-      fill_in 'Your answer', with: 'tex tex tex'
-      click_on 'Answer'
+    click_on("Delete answer", match: :first)
 
-      click_on 'Delete answer'
+    expect(page).to have_content 'Answer successfully deleted'
 
-      expect(page).to have_content 'Your answer was successfully deleted.'
-    end
+    expect(page).not_to have_content del_answer
+  end
+
+  scenario "authenticated user tries to delete someone's answer", js: true do
+    sign_in(user)
+    visit question_path(question)
+
+    expect(page).not_to have_link 'Delete answer'
+  end
+
+  scenario "unauthenticated user tries to delete answer", js: true do
+    visit question_path(question)
+
+    expect(page).not_to have_link 'Delete answer'
   end
 end

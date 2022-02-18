@@ -7,32 +7,33 @@ feature 'User can answer questions in order', %q{
 } do
 
   given(:user) { create(:user) }
+  given(:question) { create(:question, author: user ) }
 
   describe 'Authenticated user' do
     background do
       sign_in(user)
 
-      visit questions_path
-      click_on 'Ask question'
-      question = create_question
+      visit question_path(question)
     end
 
-    scenario 'gives an answer' do
+    scenario 'gives an answer', js: true do
       fill_in 'Your answer', with: 'tex tex tex'
       click_on 'Answer'
 
-      expect(page).to have_content 'Answer was successfully created'
-      expect(page).to have_content 'tex tex tex'
+      expect(page).to have_content 'Answer successfully created'
+      within '.answers' do
+        expect(page).to have_content 'tex tex tex'
+      end
     end
     
-    scenario 'gives an answer with errors' do
+    scenario 'gives an answer with errors', js: true do
       click_on 'Answer'
 
       expect(page).to have_content "Body can't be blank"
     end
   end
 
-  scenario 'Unauthenticated user tries to ask a question' do
+  scenario 'Unauthenticated user tries to ask a question', js: true do
     visit questions_path
     click_on 'Ask question'
 
