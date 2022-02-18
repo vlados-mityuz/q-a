@@ -14,6 +14,9 @@ li= answer.body
   p
     = f.label :body, 'Edit answer'
     = f.text_area :body
+  p
+    = f.label :files
+    = f.file_field :files, multiple: true
   p= f.submit 'Save'
 
 = render 'shared/flash_message'
