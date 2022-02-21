@@ -19,8 +19,6 @@ feature 'User can delete attachments', %q{
 
       click_on("Delete file")
 
-      visit question_path(question)
-
       expect(page).not_to have_content 'rails_helper.rb'
     end
   end
@@ -33,8 +31,6 @@ feature 'User can delete attachments', %q{
       expect(page).to have_content 'rails_helper.rb'
 
       click_on("Delete file")
-
-      visit question_path(question)
 
       expect(page).not_to have_content 'rails_helper.rb'
     end
