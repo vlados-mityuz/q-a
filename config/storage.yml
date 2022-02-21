@@ -14,11 +14,11 @@ local:
 #   region: us-east-1
 #   bucket: your_own_bucket
 
- google:
-   service: GCS
-   project: QnA Cloud
-   credentials: <%= Rails.root.join("config/creds/qna.json") %>
-   bucket: qna_bucket_vladmit
+google:
+  service: GCS
+  project: QnA Cloud
+  credentials: <%= Rails.root.join("config/creds/qna.json") %>
+  bucket: qna_bucket_vladmit
 
 # Use rails credentials:edit to set the Azure Storage secret (as azure_storage:storage_access_key)
 # microsoft:
