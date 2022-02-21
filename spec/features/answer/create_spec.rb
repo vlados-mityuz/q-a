@@ -25,6 +25,16 @@ feature 'User can answer questions in order', %q{
         expect(page).to have_content 'tex tex tex'
       end
     end
+
+    scenario 'gives an answer with attached file', js: true do
+      fill_in 'Your answer', with: 'tex tex tex'
+
+      attach_file 'File', ["#{Rails.root}/spec/rails_helper.rb", "#{Rails.root}/spec/spec_helper.rb"]
+      click_on 'Answer'
+
+      expect(page).to have_link 'rails_helper.rb'
+      expect(page).to have_link 'spec_helper.rb'
+    end
     
     scenario 'gives an answer with errors', js: true do
       click_on 'Answer'
